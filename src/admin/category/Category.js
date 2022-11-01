@@ -8,6 +8,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import AlertDialog from "./ConfirmModal";
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
@@ -15,14 +16,26 @@ const Category = () => {
   const handlerSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
-    setCategories([...categories, { id: Date.now(), name: data.get("name") }]);
+
+    for (const [key, value] of data.entries()) {
+      console.log(`${key} ${value}`); // "a 5", "b 7", "c 9"
+    }
+    setCategories([...categories, { id: Date.now(), name: data.get("name"), price: data.get("price") }]);
   };
+
+
+  function finallyDelete(id) {
+    setCategories(categories.filter((x) => x.id !== id));
+  }
+
   return (
     <div>
       <div className="add-form">
         <form onSubmit={handlerSubmit}>
           <div className="form-group">
             <TextField fullWidth={true} label={"Name"} name={"name"} />
+            {/* <TextField fullWidth={true} label={"L:ast Name"} name={"LastName"} /> */}
+            {/* <TextField fullWidth={true} label={"L:ast Name"} name={"MotherName"} /> */}
           </div>
           <div className="form-group">
             <Button type={"submit"} variant={"outlined"}>
@@ -35,25 +48,27 @@ const Category = () => {
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Dessert (100g serving)</TableCell>
-              <TableCell align="right">Calories</TableCell>
-              <TableCell align="right">Fat&nbsp;(g)</TableCell>
+              <TableCell>id</TableCell>
+              <TableCell align="center">Name</TableCell>
+              <TableCell align="center">Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {categories.map((row) => (
               <TableRow
-                key={row.name}
+                key={row.id}
                 sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
               >
                 <TableCell component="th" scope="row">
-                  {row.name}
+                  {row.id}
                 </TableCell>
-                <TableCell align="right">{row.name}</TableCell>
-                <TableCell align="right">
-                  <Button variant={"outlined"} color={"error"}>
-                    Delete
-                  </Button>
+                <TableCell align="center">{row.name}</TableCell>
+                <TableCell align="center">
+                  <AlertDialog
+                    onYesClick={() => {
+                      finallyDelete(row.id)
+                    }}
+                  />
                 </TableCell>
               </TableRow>
             ))}
