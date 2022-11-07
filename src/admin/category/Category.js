@@ -9,6 +9,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import AlertDialog from "./ConfirmModal";
+import { Link } from "react-router-dom";
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
@@ -40,10 +41,16 @@ const Category = () => {
     // setCategories([...categories, { id: Date.now(), name: data.get("name"), price: data.get("price") }]);
   };
 
-
   const finallyDelete = (id) => {
-    setCategories(categories.filter((x) => x.id !== id));
-  }
+    fetch("http://asfaltirovanie7-24.ru/api/categories/delete/" + id)
+      .then((x) => x.json())
+      .then((data) => {
+        if (data.status === 1) {
+          setCategories(categories.filter((x) => x.id !== id));
+          alert(data.message);
+        }
+      });
+  };
 
   return (
     <div>
@@ -66,6 +73,7 @@ const Category = () => {
               <TableCell>id</TableCell>
               <TableCell align="center">Name</TableCell>
               <TableCell align="center">Delete</TableCell>
+              <TableCell align="center">Show</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -81,9 +89,14 @@ const Category = () => {
                 <TableCell align="center">
                   <AlertDialog
                     onYesClick={() => {
-                      finallyDelete(row.id)
+                      finallyDelete(row.id);
                     }}
                   />
+                </TableCell>
+                <TableCell align="center">
+                  <Link to={"/category/" + row.id}>
+                    <button>Show</button>
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}
