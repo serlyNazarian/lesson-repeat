@@ -1,5 +1,5 @@
 import { Button, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Category.css";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -12,19 +12,36 @@ import AlertDialog from "./ConfirmModal";
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    fetch("http://asfaltirovanie7-24.ru/api/categories/get")
+      .then((x) => x.json())
+      .then((data) => setCategories(data.categories));
+  }, []);
 
   const handlerSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
+    let cong = { name: data.get("name") };
+    const fetchConfiguration = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(cong),
+    };
+    fetch(
+      "http://asfaltirovanie7-24.ru/api/categories/store",
+      fetchConfiguration
+    )
+      .then((x) => x.json())
+      .then((x) => setCategories([x.category, ...categories]));
 
-    for (const [key, value] of data.entries()) {
-      console.log(`${key} ${value}`); // "a 5", "b 7", "c 9"
-    }
-    setCategories([...categories, { id: Date.now(), name: data.get("name"), price: data.get("price") }]);
+    // for (const [key, value] of data.entries()) {
+    //   console.log(`${key} ${value}`); // "a 5", "b 7", "c 9"
+    // }
+    // setCategories([...categories, { id: Date.now(), name: data.get("name"), price: data.get("price") }]);
   };
 
 
-  function finallyDelete(id) {
+  const finallyDelete = (id) => {
     setCategories(categories.filter((x) => x.id !== id));
   }
 
@@ -33,9 +50,7 @@ const Category = () => {
       <div className="add-form">
         <form onSubmit={handlerSubmit}>
           <div className="form-group">
-            <TextField fullWidth={true} label={"Name"} name={"name"} />
-            {/* <TextField fullWidth={true} label={"L:ast Name"} name={"LastName"} /> */}
-            {/* <TextField fullWidth={true} label={"L:ast Name"} name={"MotherName"} /> */}
+            <TextField required fullWidth={true} label={"Name"} name={"name"} />
           </div>
           <div className="form-group">
             <Button type={"submit"} variant={"outlined"}>
