@@ -10,9 +10,12 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import AlertDialog from "./ConfirmModal";
 import { Link } from "react-router-dom";
+import { showAlertError, showAlertSuccess } from "../../util/UtilNotify";
 
 const Category = () => {
   const [categories, setCategories] = useState([]);
+
+
   useEffect(() => {
     fetch("http://asfaltirovanie7-24.ru/api/categories/get")
       .then((x) => x.json())
@@ -22,6 +25,7 @@ const Category = () => {
   const handlerSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
+    e.target.reset();
     let cong = { name: data.get("name") };
     const fetchConfiguration = {
       method: "POST",
@@ -47,10 +51,15 @@ const Category = () => {
       .then((data) => {
         if (data.status === 1) {
           setCategories(categories.filter((x) => x.id !== id));
-          alert(data.message);
+          showAlertSuccess(data.message)
+        } else {
+          showAlertError(data.message)
         }
       });
   };
+
+
+
 
   return (
     <div>
@@ -94,8 +103,8 @@ const Category = () => {
                   />
                 </TableCell>
                 <TableCell align="center">
-                  <Link to={"/category/" + row.id}>
-                    <button>Show</button>
+                  <Link className="link" to={"/category/" + row.id}>
+                    <Button variant={"outlined"}>Show</Button>
                   </Link>
                 </TableCell>
               </TableRow>

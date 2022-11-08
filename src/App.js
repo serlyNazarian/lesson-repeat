@@ -5,10 +5,13 @@ import SubCategory from "./admin/sub category/SubCategory";
 import Products from "./admin/products/Products";
 import Header from "./admin/header/Header";
 import SinglePage from "./admin/category/SinglePage";
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
     <div className="App">
+      <ToastContainer />
       <Header />
       <Routes>
         {/* <Route path="/" element={<Header />} /> */}
