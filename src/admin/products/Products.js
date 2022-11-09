@@ -4,26 +4,25 @@ import TableContainer from "@mui/material/TableContainer";
 import { useState } from 'react';
 import AlertDialog from '../category/ConfirmModal';
 import { showAlertSuccess } from "../../util/UtilNotify";
+import Axios from "axios";
 
 const Products = () => {
     const [products, setProducts] = useState([]);
-    const handlerSubmit = (e) => {
-        e.preventDefault()
-        const data = new FormData(e.currentTarget);
-        e.target.reset();
-        setProducts([
-            ...products,
-            {
-                id: Date.now(),
-                title: data.get("title"),
-                price: data.get("price"),
-                sale: data.get("sale"),
-                description: data.get("description"),
-                avatar: data.get("avatar"),
-            }
-        ])
-    }
+    const [avatar, setAvatar] = useState();
+    const [images, setImages] = useState();
 
+
+    const handlerSubmit = (e) => {
+        e.preventDefault();
+        const data = new FormData(e.currentTarget);
+        data.append("avatar", avatar);
+        for (let x of images) {
+            data.append("images[]", x);
+        }
+        Axios.post("http://asfaltirovanie7-24.ru/api/products/store", data).then((data) => console.log(data));
+    };
+
+    // e.target.reset();
 
 
     const finallyDelete = (id) => {
@@ -49,18 +48,43 @@ const Products = () => {
                     <div className="form-group">
                         <TextField required fullWidth={true} label={"Description"} name={"description"} />
                     </div>
-                    <div className='form-group'>
-                        <Button
-                            variant="contained"
-                            component="label"
+                    <div className="form-group">
+                        <TextField
+                            select
+                            fullWidth={true}
+                            id={"suCategory_id"}
+                            name={"subCategory_id"}
+                            helperText="Please select your subcategory"
                         >
-                            Upload File
-                            <input
-                                name={'avatar'}
-                                type="file"
-                                hidden
-                            />
-                        </Button>
+                            <option value="1">Adsdsa</option>
+                            <option value="2">Adsdsa</option>
+                            <option value="3">Adsdsa</option>
+                            <option value="4">Adsdsa</option>
+                        </TextField>
+                    </div>
+                    <div className='form-group'>
+                        <TextField
+                            type={"file"}
+                            fullWidth={true}
+                            id="avatar"
+                            name="avatar"
+                            variant="outlined"
+                            onChange={(e) => setAvatar(e.target.files[0])}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <label>Images</label>
+                        <div>
+                            <Button fullWidth={true} variant={"outlined"}>
+                                <input
+                                    type="file"
+                                    name={"images"}
+                                    id="images"
+                                    multiple={true}
+                                    onChange={(e) => setImages(e.target.files)}
+                                />
+                            </Button>
+                        </div>
                     </div>
                     <div className="form-group">
                         <Button type={"submit"} variant={"outlined"}>
