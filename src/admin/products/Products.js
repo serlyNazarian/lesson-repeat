@@ -9,7 +9,7 @@ import Axios from "axios";
 const Products = () => {
     const [products, setProducts] = useState([]);
     const [avatar, setAvatar] = useState();
-    const [images, setImages] = useState();
+    const [images, setImages] = useState([]);
 
 
     const handlerSubmit = (e) => {
